@@ -1,0 +1,15 @@
+{
+  "name": "resumetrust-ai-server",
+  "version": "1.0.0",
+  "description": "ResumeTrust-AI Backend - Resume Analysis with Trust Score Verification",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": ["resume", "ai", "authentication", "mongodb"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}
