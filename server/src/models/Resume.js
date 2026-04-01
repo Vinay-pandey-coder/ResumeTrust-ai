@@ -1,1 +1,0 @@
-// Resume Database Schema (Mongoose)
