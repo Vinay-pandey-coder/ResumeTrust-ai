@@ -36,13 +36,19 @@ app.use(compression());
 // Spam Protection: Ek IP se 15 min mein max 50 requests
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 50, 
+    max: 50,
     message: { message: "Too many requests, please try again after 15 minutes." }
 });
 app.use('/api/', limiter);
 
 // Standard Middlewares
-app.use(cors());
+// [CORS CONFIGURATION]: Frontend ko access dene ke liye
+app.use(cors({
+    origin: 'http://localhost:5173', // Tumhare frontend ka URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true, // Cookies ya Auth headers ke liye zaroori hai
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // ---------------------------------------------------------

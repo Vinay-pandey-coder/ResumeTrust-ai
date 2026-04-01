@@ -10,32 +10,39 @@ require('dotenv').config();
 exports.analyzeProfile = async (resumeText, githubData, jdText = "") => {
     try {
         const apiKey = process.env.GEMINI_API_KEY;
-        
-        // [WORKING MODEL]: gemini-2.5-flash jo tumhare pass sahi chal raha hai
+
+        // [WORKING MODEL]: gemini-2.5-flash
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+        // [LOGIC]: Agar user JD nahi deta, toh AI ko default context dena taaki ATS score 0 ya random na aaye
+        const finalJD = jdText.trim() || "Full Stack Web Developer (General MERN Stack Role)";
 
         const prompt = `
         You are an Advanced Technical Auditor and ATS (Applicant Tracking System) Expert.
         
+        CONTEXT:
+        Evaluate the candidate's resume against the Target Job Description. 
+        If the JD is general, use industry standards for a MERN Stack Developer.
+
         CANDIDATE RESUME CONTENT: 
         ${resumeText.substring(0, 4000)}
 
-        GITHUB STATS: 
+        GITHUB STATS (Live Evidence): 
         - Public Repos: ${githubData.profile.public_repos}
         - Top Languages: ${githubData.stats.topLanguages.join(", ")}
         - Total Stars: ${githubData.stats.totalStars}
 
         TARGET JOB DESCRIPTION (JD): 
-        ${jdText || "N/A - General Profile Audit"}
+        ${finalJD}
 
         TASK:
-        1. "trustScore" (0-100): Match resume claims with GitHub activity.
-        2. "atsScore" (0-100): Match resume content with provided Job Description.
-        3. "analysisSummary": Short professional overview of the candidate.
-        4. "skillsMatched": List skills found in both Resume and JD (or GitHub).
-        5. "missingSkills": Skills required in JD but NOT found in Resume.
-        6. "recommendations": Suggestions to improve the resume or profile.
-        7. "redFlags": Any inconsistencies (e.g., future dates, skill mismatches).
+        1. "trustScore" (0-100): Compare resume claims with GitHub activity. High score only if GitHub repos match the mentioned tech stack.
+        2. "atsScore" (0-100): Strict match of resume keywords/experience against the JD provided.
+        3. "analysisSummary": Short professional overview of the candidate's strengths and weaknesses.
+        4. "skillsMatched": List specific technical skills found in both Resume and JD.
+        5. "missingSkills": Crucial skills required in the JD but NOT found in the Resume.
+        6. "recommendations": Practical steps to improve the resume or technical profile.
+        7. "redFlags": Inconsistencies like future dates, suspicious gaps, or skill-experience mismatch.
 
         RETURN ONLY A VALID JSON OBJECT:
         {
@@ -48,7 +55,7 @@ exports.analyzeProfile = async (resumeText, githubData, jdText = "") => {
             "redFlags": ["string"]
         }`;
 
-        console.log("Sending Analysis Request to Gemini (v2.5-flash)... 🚀");
+        console.log("Sending Analysis Request to Gemini (v2.5-flash)... 🧠🚀");
 
         const response = await axios.post(url, {
             contents: [{
@@ -62,7 +69,7 @@ exports.analyzeProfile = async (resumeText, githubData, jdText = "") => {
         }
 
         const aiText = response.data.candidates[0].content.parts[0].text;
-        
+
         // JSON Clean-up (Markdown backticks hatane ke liye aur sirf JSON pakadne ke liye)
         const jsonMatch = aiText.match(/\{[\s\S]*\}/);
         if (!jsonMatch) throw new Error("AI failed to return valid JSON format");
