@@ -1,22 +1,22 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const connectDB = require('./config/db'); // [NEW] Import db.js
 
-// Environment variables load karne ke liye
 dotenv.config();
+
+// [NEW] Database se connect karo
+connectDB();
 
 const app = express();
 
-// Middlewares
-app.use(cors()); // Frontend se connection allow karne ke liye
-app.use(express.json()); // JSON data ko samajhne ke liye
+app.use(cors());
+app.use(express.json());
 
-// Test Route (Check karne ke liye ki backend chal raha hai)
 app.get('/', (req, res) => {
     res.send('ResumeTrust-AI Backend is Running! 🚀');
 });
 
-// Port define karna (.env se ya default 5000)
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
