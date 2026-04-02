@@ -26,12 +26,17 @@ const app = express();
 
 // Standard CORS configuration
 const corsOptions = {
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], // Allowed origins
-    credentials: true,                                       // Cookies & Auth headers
+    // Yahan tumhara naya Vercel URL add kar diya hai
+    origin: [
+        'http://localhost:5173', 
+        'http://127.0.0.1:5173', 
+        'https://resume-trust-ai-wccy.vercel.app' 
+    ], 
+    credentials: true,                                       
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    exposedHeaders: ['Set-Cookie'],                          // Optional but good for cookies
-    optionsSuccessStatus: 200                                // Best for compatibility
+    exposedHeaders: ['Set-Cookie'],                          
+    optionsSuccessStatus: 200                                
 };
 
 // Use CORS first to handle all preflight (OPTIONS) requests correctly
