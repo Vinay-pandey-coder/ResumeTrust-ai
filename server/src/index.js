@@ -19,6 +19,7 @@ console.log("Check API Key:", process.env.GEMINI_API_KEY ? "Key Loaded ✅" : "K
 connectDB();
 
 const app = express();
+app.set('trust proxy', 1);
 
 // ---------------------------------------------------------
 // [CORS & SECURITY MIDDLEWARES]
