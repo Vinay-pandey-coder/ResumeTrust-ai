@@ -1,4 +1,3 @@
-// User Database Schema (Mongoose)
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
@@ -9,7 +8,7 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, 'Please add an email'],
-        unique: true, 
+        unique: true,
         match: [
             /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
             'Please add a valid email'
@@ -19,19 +18,31 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please add a password'],
         minlength: 6,
-        select: false // Jab hum user fetch karein, toh password default mein na dikhe (Security)
+        select: false // Security ke liye default fetch mein password nahi aayega
     },
+    // Employee ke liye compulsory hoga (Registration logic mein handle karenge)
     githubHandle: {
         type: String,
-        default: '' // User apna github handle baad mein bhi de sakta hai
+        default: '',
+        trim: true
     },
-    trustScore: {
-        type: Number,
-        default: 0 // Shuruat mein score zero rahega
+    // Recruiter ke liye compulsory link
+    linkedinProfile: {
+        type: String,
+        default: '',
+        trim: true
     },
     isRecruiter: {
         type: Boolean,
-        default: false // Default mein sab "Candidate" honge
+        default: false // Default mein Candidate, tick karne par Recruiter
+    },
+    trustScore: {
+        type: Number,
+        default: 0
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
     },
     createdAt: {
         type: Date,

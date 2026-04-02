@@ -18,7 +18,7 @@ const AnalysisSchema = new mongoose.Schema({
     },
     resumePath: {
         type: String,
-        required: true
+        default: 'deleted_after_analysis'
     },
     // --- AI se mila hua data ---
     trustScore: {

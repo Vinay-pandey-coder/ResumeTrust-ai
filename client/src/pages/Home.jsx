@@ -16,7 +16,9 @@ const Home = ({ isLoggedIn, login, openLogin }) => {
     name: '',
     email: '',
     password: '',
-    isRecruiter: false
+    isRecruiter: false,
+    githubHandle: '',      // [NEW FIELD]
+    linkedinProfile: ''    // [NEW FIELD]
   });
 
   useEffect(() => {
@@ -43,14 +45,14 @@ const Home = ({ isLoggedIn, login, openLogin }) => {
         response = await registerUser(formData);
         toast.success('Registration successful!');
       } else {
-        response = await loginUser({ 
-          email: formData.email, 
-          password: formData.password 
+        response = await loginUser({
+          email: formData.email,
+          password: formData.password
         });
         toast.success('Welcome back!');
       }
-      
-      login(response, response.token);
+
+      login(response.user, response.token);
       setShowModal(false);
       navigate('/dashboard');
     } catch (error) {
@@ -62,8 +64,8 @@ const Home = ({ isLoggedIn, login, openLogin }) => {
 
   return (
     <div className="home-page page-container">
-      <MetaData 
-        title="Know Your Resume's Worth" 
+      <MetaData
+        title="Know Your Resume's Worth"
         description="Verify your resume authenticity and get real-time ATS scores with GitHub integration."
       />
 
@@ -74,7 +76,7 @@ const Home = ({ isLoggedIn, login, openLogin }) => {
           <span>Can Be Trusted</span>
         </h1>
         <p className="hero-subtitle text-secondary">
-          AI-powered ATS scoring combined with real-time GitHub verification 
+          AI-powered ATS scoring combined with real-time GitHub verification
           to validate your expertise for recruiters.
         </p>
         <div className="hero-cta">
@@ -139,13 +141,16 @@ const Home = ({ isLoggedIn, login, openLogin }) => {
 
       {/* Auth Modal */}
       {showModal && (
-        <div className="modal-overlay flex-center" onClick={() => setShowModal(false)}>
+        <div className="modal-overlay flex-center" onClick={() => {
+          setShowModal(false);
+          navigate('/');
+        }}>
           <div className="modal-content card" onClick={e => e.stopPropagation()}>
             <h2 className="modal-title">{isRegister ? 'Create Account' : 'Welcome Back'}</h2>
             <p className="modal-subtitle text-secondary">
               {isRegister ? 'Start verifying your resume today.' : 'Login to access your dashboard.'}
             </p>
-            
+
             <form onSubmit={handleSubmit} className="mt-6">
               {isRegister && (
                 <Input
@@ -175,19 +180,43 @@ const Home = ({ isLoggedIn, login, openLogin }) => {
                 placeholder="••••••••"
                 required
               />
-              
+
+              {/* --- ROLE BASED FIELDS [START] --- */}
               {isRegister && (
-                <div className="checkbox-group mb-4">
-                  <input
-                    type="checkbox"
-                    id="isRecruiter"
-                    name="isRecruiter"
-                    checked={formData.isRecruiter}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="isRecruiter" className="ml-2 text-secondary">I am a recruiter</label>
-                </div>
+                <>
+                  <div className="checkbox-group mb-4">
+                    <input
+                      type="checkbox"
+                      id="isRecruiter"
+                      name="isRecruiter"
+                      checked={formData.isRecruiter}
+                      onChange={handleChange}
+                    />
+                    <label htmlFor="isRecruiter" className="ml-2 text-secondary">I am a recruiter</label>
+                  </div>
+
+                  {formData.isRecruiter ? (
+                    <Input
+                      label="LinkedIn Profile URL"
+                      name="linkedinProfile"
+                      value={formData.linkedinProfile}
+                      onChange={handleChange}
+                      placeholder="https://linkedin.com/in/yourprofile"
+                      required
+                    />
+                  ) : (
+                    <Input
+                      label="GitHub Username"
+                      name="githubHandle"
+                      value={formData.githubHandle}
+                      onChange={handleChange}
+                      placeholder="username (e.g. vinay-coder)"
+                      required
+                    />
+                  )}
+                </>
               )}
+              {/* --- ROLE BASED FIELDS [END] --- */}
 
               <Button type="submit" fullWidth loading={loading}>
                 {isRegister ? 'Sign Up' : 'Login'}
@@ -198,8 +227,8 @@ const Home = ({ isLoggedIn, login, openLogin }) => {
               <span className="text-muted">
                 {isRegister ? 'Already have an account?' : "Don't have an account?"}
               </span>
-              <button 
-                className="text-accent ml-2 btn-link" 
+              <button
+                className="text-accent ml-2 btn-link"
                 onClick={() => setIsRegister(!isRegister)}
               >
                 {isRegister ? 'Login' : 'Sign Up'}

@@ -21,35 +21,40 @@ connectDB();
 const app = express();
 
 // ---------------------------------------------------------
-// [MIDDLEWARES]
+// [CORS & SECURITY MIDDLEWARES]
 // ---------------------------------------------------------
 
-// Security: Headers ko secure karta hai
-app.use(helmet());
+// Standard CORS configuration
+const corsOptions = {
+    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], // Allowed origins
+    credentials: true,                                       // Cookies & Auth headers
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Set-Cookie'],                          // Optional but good for cookies
+    optionsSuccessStatus: 200                                // Best for compatibility
+};
 
-// Logging: Terminal mein requests ka status dikhayega (GET /api 200...)
+// Use CORS first to handle all preflight (OPTIONS) requests correctly
+app.use(cors(corsOptions));
+
+// Security Headers
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" } // Allow resources to be loaded cross-origin
+}));
+
+// Standard Middlewares
+app.use(express.json());
 app.use(morgan('dev'));
-
-// Performance: Response data ko compress karke fast bhejta hai
 app.use(compression());
 
-// Spam Protection: Ek IP se 15 min mein max 50 requests
+// Spam Protection: Ek IP se 15 min mein max 100 requests (increased limit for dev/analysis)
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 50,
+    windowMs: 15 * 60 * 1000,
+    max: 100,
     message: { message: "Too many requests, please try again after 15 minutes." }
 });
 app.use('/api/', limiter);
 
-// Standard Middlewares
-// [CORS CONFIGURATION]: Frontend ko access dene ke liye
-app.use(cors({
-    origin: 'http://localhost:5173', // Tumhare frontend ka URL
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true, // Cookies ya Auth headers ke liye zaroori hai
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
-app.use(express.json());
 
 // ---------------------------------------------------------
 // [ROUTES]

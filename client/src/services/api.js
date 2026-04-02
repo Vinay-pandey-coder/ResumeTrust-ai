@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  withCredentials: true, // Allow cookies and credentials in CORS
 });
 
 // Request interceptor to add token to headers
@@ -24,14 +25,21 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
+    // Only redirect if it's a 401 Unauthorized but not a background check failure (if we want to be safe)
+    // Actually, simple logout is better
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      // Use window.location.href carefully; it may cause page reloads
+      // Alternatively, we could just clear state, but this works as a catch-all
+      if (window.location.pathname !== '/' && window.location.pathname !== '/login') {
+        window.location.href = '/';
+      }
     }
     return Promise.reject(error);
   }
 );
+
 
 // Auth services
 export const registerUser = async (data) => {

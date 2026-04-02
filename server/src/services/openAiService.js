@@ -1,83 +1,55 @@
 const axios = require('axios');
 require('dotenv').config();
 
-/**
- * @desc    Analyze Resume, GitHub data, and Match with JD using Gemini AI
- * @param   {String} resumeText - Extracted text from PDF
- * @param   {Object} githubData - Stats from GitHub API
- * @param   {String} jdText - Optional Job Description for ATS matching
- */
 exports.analyzeProfile = async (resumeText, githubData, jdText = "") => {
     try {
         const apiKey = process.env.GEMINI_API_KEY;
-
-        // [WORKING MODEL]: gemini-2.5-flash
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
-        // [LOGIC]: Agar user JD nahi deta, toh AI ko default context dena taaki ATS score 0 ya random na aaye
         const finalJD = jdText.trim() || "Full Stack Web Developer (General MERN Stack Role)";
+        const currentDate = new Date().toISOString().split('T')[0];
 
         const prompt = `
-        You are an Advanced Technical Auditor and ATS (Applicant Tracking System) Expert.
-        
-        CONTEXT:
-        Evaluate the candidate's resume against the Target Job Description. 
-        If the JD is general, use industry standards for a MERN Stack Developer.
+        You are an Advanced Technical Auditor and ATS Expert.
+        Today's date is: ${currentDate}
 
-        CANDIDATE RESUME CONTENT: 
-        ${resumeText.substring(0, 4000)}
+        Evaluate the candidate's resume against the Target JD.
 
-        GITHUB STATS (Live Evidence): 
-        - Public Repos: ${githubData.profile.public_repos}
-        - Top Languages: ${githubData.stats.topLanguages.join(", ")}
-        - Total Stars: ${githubData.stats.totalStars}
+        RESUME: ${resumeText.substring(0, 4000)}
+        GITHUB: ${JSON.stringify(githubData)}
+        JD: ${finalJD}
 
-        TARGET JOB DESCRIPTION (JD): 
-        ${finalJD}
+        IMPORTANT RULES FOR RED FLAGS:
+        1. Do NOT flag a date as future if it is within the last 12 months from today's date (${currentDate}). 
+           Example: If today is April 2026, then March 2026 is a VALID recent join date — do NOT flag it.
+        2. Only flag a date if it is MORE than 30 days in the future from today.
+        3. Only flag GitHub stats as suspicious if repos are 0 or stars are extremely low AND repo count is also very low.
+        4. Only flag skill mismatches if the skill is completely absent from both resume AND github languages.
+        5. Red flags should be GENUINE issues only — not assumptions.
+        6. If something looks valid and explainable, do NOT add it as a red flag.
 
-        TASK:
-        1. "trustScore" (0-100): Compare resume claims with GitHub activity. High score only if GitHub repos match the mentioned tech stack.
-        2. "atsScore" (0-100): Strict match of resume keywords/experience against the JD provided.
-        3. "analysisSummary": Short professional overview of the candidate's strengths and weaknesses.
-        4. "skillsMatched": List specific technical skills found in both Resume and JD.
-        5. "missingSkills": Crucial skills required in the JD but NOT found in the Resume.
-        6. "recommendations": Practical steps to improve the resume or technical profile.
-        7. "redFlags": Inconsistencies like future dates, suspicious gaps, or skill-experience mismatch.
+        SCORING RULES:
+        - trustScore: Base it on GitHub activity + resume consistency.
+          Do NOT reduce score for valid recent join dates.
+        - atsScore: Match resume keywords vs JD keywords only.
 
-        RETURN ONLY A VALID JSON OBJECT:
+        RETURN ONLY VALID JSON:
         {
-            "trustScore": number,
-            "atsScore": number,
-            "analysisSummary": "string",
-            "skillsMatched": ["string"],
-            "missingSkills": ["string"],
-            "recommendations": ["string"],
-            "redFlags": ["string"]
+          "trustScore": number,
+          "atsScore": number,
+          "analysisSummary": "string",
+          "skillsMatched": ["string"],
+          "missingSkills": ["string"],
+          "recommendations": ["string"],
+          "redFlags": ["string"]
         }`;
 
-        console.log("Sending Analysis Request to Gemini (v2.5-flash)... 🧠🚀");
-
-        const response = await axios.post(url, {
-            contents: [{
-                parts: [{ text: prompt }]
-            }]
-        });
-
-        // Response extraction from Gemini structure
-        if (!response.data.candidates || !response.data.candidates[0].content) {
-            throw new Error("Empty response from Gemini API");
-        }
-
+        const response = await axios.post(url, { contents: [{ parts: [{ text: prompt }] }] });
         const aiText = response.data.candidates[0].content.parts[0].text;
-
-        // JSON Clean-up (Markdown backticks hatane ke liye aur sirf JSON pakadne ke liye)
         const jsonMatch = aiText.match(/\{[\s\S]*\}/);
-        if (!jsonMatch) throw new Error("AI failed to return valid JSON format");
-
         return JSON.parse(jsonMatch[0]);
-
     } catch (error) {
-        console.error("Gemini Service Error:", error.response?.data || error.message);
-        throw new Error("AI Analysis failed: " + (error.response?.data?.error?.message || error.message));
+        console.error("AI Service Error:", error.message);
+        throw new Error("AI Analysis failed: " + error.message);
     }
 };

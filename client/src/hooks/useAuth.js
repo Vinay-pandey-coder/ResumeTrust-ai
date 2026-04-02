@@ -30,15 +30,10 @@ const useAuth = () => {
 
       if (storedToken) {
         try {
-          // If user exists in storage, set it initially to avoid flicker
-          if (storedUser) {
-            setUser(JSON.parse(storedUser));
-          }
-
-          // Fetch fresh user data to verify token
+          if (storedUser) setUser(JSON.parse(storedUser));
           const userData = await getMe();
-          setUser(userData);
-          localStorage.setItem('user', JSON.stringify(userData));
+          setUser(userData.user); // Fix: Access nested user object
+          localStorage.setItem('user', JSON.stringify(userData.user));
           setIsLoggedIn(true);
         } catch (error) {
           console.error('Auth verification failed:', error);
@@ -49,18 +44,10 @@ const useAuth = () => {
       }
       setLoading(false);
     };
-
     initAuth();
   }, [logout]);
 
-  return {
-    user,
-    token,
-    isLoggedIn,
-    loading,
-    login,
-    logout,
-  };
+  return { user, token, isLoggedIn, loading, login, logout };
 };
 
 export default useAuth;

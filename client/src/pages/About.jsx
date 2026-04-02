@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import MetaData from '../components/SEO/MetaData';
+import HowItWorks from '../components/HowItWorks';
 
 const About = () => {
   return (
@@ -35,6 +36,9 @@ const About = () => {
           </div>
         </section>
 
+        {/* How It Works — Candidate, Recruiter, Security tabs */}
+        <HowItWorks />
+
         <section className="mt-10">
           <h2 className="section-title">Privacy & Security</h2>
           <div className="card border-danger">
@@ -52,9 +56,9 @@ const About = () => {
           <div className="flex flex-wrap gap-4">
             <span className="badge badge-accent">React + Vite</span>
             <span className="badge badge-accent">Node.js + Express</span>
-            <span className="badge badge-accent">OpenAI GPT-4o</span>
+            <span className="badge badge-accent">Gemini AI</span>
             <span className="badge badge-accent">GitHub API</span>
-            <span className="badge badge-accent">Vector Databases</span>
+            <span className="badge badge-accent">MongoDB Atlas</span>
           </div>
         </section>
       </div>

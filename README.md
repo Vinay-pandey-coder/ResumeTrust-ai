@@ -57,7 +57,7 @@ Environment Variables (.env) Setup:
 Create a .env file in the root directory and add the following:
 
 Code snippet
-PORT=5000
+PORT=3000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_super_secret_key
 GEMINI_API_KEY=your_google_gemini_api_key

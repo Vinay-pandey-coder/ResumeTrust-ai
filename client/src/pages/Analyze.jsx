@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // [UPDATED]: useEffect added
 import { toast } from 'react-hot-toast';
 import { analyzeResume } from '../services/api';
 import Button from '../components/UI/Button';
@@ -13,6 +13,18 @@ const Analyze = () => {
   const [file, setFile] = useState(null);
   const [githubUsername, setGithubUsername] = useState('');
   const [jdText, setJdText] = useState('');
+
+  // [NEW LOGIC]: Auth data se user role aur handle nikalna
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user'); // Ya jo bhi tumhara auth storage hai
+    if (savedUser) {
+      const user = JSON.parse(savedUser);
+      // Agar employee hai toh handle lock kardo, recruiter hai toh khali chhodo
+      if (!user.isRecruiter && user.githubHandle) {
+        setGithubUsername(user.githubHandle);
+      }
+    }
+  }, []);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -48,31 +60,37 @@ const Analyze = () => {
   const resetForm = () => {
     setResult(null);
     setFile(null);
-    setGithubUsername('');
+    // Reset karte waqt bhi check karna ki employee ka handle wapas aa jaye
+    const user = JSON.parse(localStorage.getItem('user'));
+    setGithubUsername(!user?.isRecruiter ? user?.githubHandle || '' : '');
     setJdText('');
   };
 
   if (loading) return <Loader fullScreen />;
 
+  // User role check for 'disabled' property
+  const user = JSON.parse(localStorage.getItem('user'));
+  const isEmployee = user && !user.isRecruiter;
+
   return (
     <div className="analyze-page page-container">
       <MetaData title="Analyze Resume" description="Get your ATS and Trust score by uploading your resume." />
-      
+
       {!result ? (
         <div className="analyze-form-container fade-in">
           <h1 className="section-title text-center">Resume Analysis</h1>
           <p className="text-secondary text-center mb-10">Upload your PDF and provide your GitHub handle for a deep AI verification.</p>
-          
+
           <form onSubmit={handleAnalyze} className="analyze-form card">
             {/* Step 1: File Upload */}
             <div className="form-step">
               <label className="input-label">Step 1: Upload PDF Resume</label>
               <div className={`upload-area ${file ? 'has-file' : ''}`}>
-                <input 
-                  type="file" 
-                  id="resume-upload" 
-                  accept=".pdf" 
-                  onChange={handleFileChange} 
+                <input
+                  type="file"
+                  id="resume-upload"
+                  accept=".pdf"
+                  onChange={handleFileChange}
                   required
                 />
                 <label htmlFor="resume-upload" className="upload-label">
@@ -100,7 +118,10 @@ const Analyze = () => {
                 value={githubUsername}
                 onChange={(e) => setGithubUsername(e.target.value)}
                 required
+                disabled={isEmployee} // [NEW]: Agar candidate hai toh box lock kardo
+                className={isEmployee ? 'input-field-disabled' : ''}
               />
+              {isEmployee && <small className="text-muted mt-1 block">Your registered handle is locked for security.</small>}
             </div>
 
             {/* Step 3: JD Text (Optional) */}
@@ -128,15 +149,15 @@ const Analyze = () => {
           </div>
 
           <div className="grid-2">
-            <ScoreCard 
-              label="ATS Score" 
-              score={result.atsScore} 
-              description="How well your resume is formatted for automated systems." 
+            <ScoreCard
+              label="ATS Score"
+              score={result.atsScore}
+              description="How well your resume is formatted for automated systems."
             />
-            <ScoreCard 
-              label="Trust Score" 
-              score={result.trustScore} 
-              description="Authenticity level based on GitHub activity and resume claims." 
+            <ScoreCard
+              label="Trust Score"
+              score={result.trustScore}
+              description="Authenticity level based on GitHub activity and resume claims."
             />
           </div>
 
@@ -191,4 +212,4 @@ const Analyze = () => {
   );
 };
 
-export default Analyze;
+export default Analyze; 

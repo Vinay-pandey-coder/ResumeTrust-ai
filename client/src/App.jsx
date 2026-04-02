@@ -34,8 +34,8 @@ const App = () => {
 
   return (
     <div className="app-wrapper flex flex-col min-h-screen">
-      <Toaster 
-        position="top-right" 
+      <Toaster
+        position="top-right"
         toastOptions={{
           style: {
             background: 'var(--bg-card)',
@@ -44,11 +44,11 @@ const App = () => {
             borderRadius: 'var(--radius-md)',
           },
           duration: 4000,
-        }} 
+        }}
       />
-      
+
       <Navbar user={user} isLoggedIn={isLoggedIn} onLogout={logout} />
-      
+
       <main className="flex-grow container py-8 mt-20">
         <Suspense fallback={<Loader />}>
           <Routes>
@@ -56,25 +56,25 @@ const App = () => {
             <Route path="/about" element={<About />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/login" element={<Home user={user} isLoggedIn={isLoggedIn} login={login} openLogin={true} />} />
-            
-            <Route 
-              path="/analyze" 
+
+            <Route
+              path="/analyze"
               element={
                 <ProtectedRoute isLoggedIn={isLoggedIn}>
                   <Analyze user={user} />
                 </ProtectedRoute>
-              } 
+              }
             />
-            
-            <Route 
-              path="/dashboard" 
+
+            <Route
+              path="/dashboard"
               element={
                 <ProtectedRoute isLoggedIn={isLoggedIn}>
                   <Dashboard user={user} />
                 </ProtectedRoute>
-              } 
+              }
             />
-            
+
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

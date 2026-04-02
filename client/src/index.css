@@ -330,9 +330,8 @@ input, textarea {
   top: 0;
   left: 0;
   right: 0;
-  height: var(--nav-height);
-  background-color: rgba(15, 15, 15, 0.85); /* Transparent dark with blur */
-  backdrop-filter: blur(15px);
+  height: 64px; /* Fixed height for consistency */
+  background-color: var(--bg-secondary);
   border-bottom: 1px solid var(--border);
   z-index: 1000;
   display: flex;
@@ -341,15 +340,19 @@ input, textarea {
 
 .nav-container {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .nav-logo {
-  font-family: var(--font-heading);
-  font-size: 1.5rem;
+  font-family: 'Sora', sans-serif;
+  font-size: 1.25rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: #ffffff;
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .nav-logo span {
@@ -360,10 +363,18 @@ input, textarea {
 .nav-menu {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-left: 3rem;
+}
+
+.nav-links-center {
+  display: flex;
+  align-items: center;
   gap: 2rem;
 }
 
-.nav-links {
+.nav-links-right {
   display: flex;
   align-items: center;
   gap: 1.5rem;
@@ -372,64 +383,71 @@ input, textarea {
 .nav-link {
   color: var(--text-secondary);
   font-weight: 500;
-  font-size: 0.95rem;
-  padding: 0.5rem 0;
-  border-bottom: 2px solid transparent;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
 }
 
 .nav-link:hover, .nav-link.active {
   color: var(--text-primary);
-  border-bottom-color: var(--accent);
 }
 
-.nav-actions {
+.auth-buttons {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
 .user-name {
-  margin-right: 1rem;
+  margin-right: 0.75rem;
   color: var(--text-muted);
+  font-size: 0.9rem;
 }
 
 /* Hamburger menu */
 .hamburger {
   display: none;
   cursor: pointer;
+  background: none;
+  border: none;
   flex-direction: column;
   gap: 5px;
+  padding: 5px;
+  z-index: 1001;
 }
 
 .hamburger span {
   width: 25px;
   height: 2px;
-  background-color: var(--text-primary);
-  transition: 0.3s;
+  background-color: #ffffff;
+  transition: all 0.3s ease;
 }
 
 /* Responsive Navbar */
-@media (max-width: 992px) {
+@media (max-width: 768px) {
   .nav-menu {
-    position: fixed;
-    top: -100%;
+    position: absolute;
+    top: -400px; /* Hidden by default */
     left: 0;
     width: 100%;
-    height: auto;
+    flex-direction: column;
     background-color: var(--bg-card);
-    flex-direction: column;
     padding: 2rem 0;
-    transition: 0.4s;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
     border-bottom: 1px solid var(--border);
+    margin-left: 0;
     gap: 1.5rem;
+    z-index: 999;
   }
 
-  .nav-menu.mobile-active {
-    top: var(--nav-height);
+  .nav-menu.open {
+    top: 64px; /* Slide down into view */
   }
 
-  .nav-links {
+  .nav-links-center, .nav-links-right, .auth-buttons {
     flex-direction: column;
+    width: 100%;
+    text-align: center;
     gap: 1.5rem;
   }
 
@@ -1063,6 +1081,49 @@ input, textarea {
   padding: 0 1.5rem;
   animation: fadeIn 0.4s ease forwards;
 }
+
+
+.hiw-tabs { margin-bottom: 2rem; }
+.hiw-tab {
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.hiw-tab.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.hiw-step {
+  display: flex;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+.hiw-step:last-child { border-bottom: none; }
+.hiw-num {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center;
+  justify-content: center;
+  font-size: 14px; font-weight: 600;
+  flex-shrink: 0;
+}
+.hiw-purple { background: var(--accent-light); color: var(--accent); }
+.hiw-teal   { background: rgba(29,158,117,0.15); color: #1D9E75; }
+.hiw-green  { background: rgba(34,197,94,0.15); color: var(--success); }
+.hiw-amber  { background: rgba(245,158,11,0.15); color: var(--warning); }
+.hiw-danger { background: rgba(239,68,68,0.15); color: var(--danger); }
+.hiw-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+.hiw-desc  { font-size: 0.875rem; margin-bottom: 8px; }
+
+
 
 /* Animations... (already existing or refined) */
 @keyframes fadeIn {

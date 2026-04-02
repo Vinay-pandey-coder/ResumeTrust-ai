@@ -33,10 +33,13 @@ const Dashboard = ({ user }) => {
   return (
     <div className="dashboard-page page-container fade-in">
       <MetaData title="Dashboard" description="View your resume analysis history and trust score." />
-      
+
       <div className="dashboard-header flex-between mb-10">
         <div className="user-welcome">
-          <h1 className="hero-title mb-0">Welcome back, <span>{user?.name.split(' ')[0]}</span></h1>
+          {/* [FIXED]: Added safe check for user.name to prevent split() error */}
+          <h1 className="hero-title mb-0">
+            Welcome back, <span>{user?.name ? user.name.split(' ')[0] : 'User'}</span>
+          </h1>
           <p className="text-secondary">{user?.email}</p>
         </div>
         <Button onClick={() => navigate('/analyze')} variant="primary">
@@ -52,8 +55,8 @@ const Dashboard = ({ user }) => {
         <div className="card stat-card">
           <span className="stat-label">Average Trust Score</span>
           <h2 className="stat-value">
-            {history.length > 0 
-              ? Math.round(history.reduce((acc, curr) => acc + curr.trustScore, 0) / history.length) 
+            {history.length > 0
+              ? Math.round(history.reduce((acc, curr) => acc + curr.trustScore, 0) / history.length)
               : 0}%
           </h2>
         </div>
@@ -65,7 +68,7 @@ const Dashboard = ({ user }) => {
 
       <div className="history-section">
         <h2 className="section-title mb-6">Recent Analyses</h2>
-        
+
         {history.length > 0 ? (
           <div className="history-list">
             {history.map((item) => (
