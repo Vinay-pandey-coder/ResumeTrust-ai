@@ -1,5 +1,5 @@
-const axios = require('axios');
-const pdfParse = require('pdf-parse-fork');
+const fs = require('fs').promises;
+const { extractText } = require('../services/pdfService');
 const { fetchGitHubData } = require('../services/githubService');
 const { analyzeProfile } = require('../services/openAiService');
 const Analysis = require('../models/Analysis');
@@ -13,7 +13,10 @@ exports.analyzeResume = async (req, res, next) => {
 
         // 1. Basic Validation
         if (!req.file || !githubUsername) {
-            return res.status(400).json({ success: false, message: 'Resume and GitHub username are required' });
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Resume and GitHub username are required' 
+            });
         }
 
         // ---------------------------------------------------------
@@ -21,6 +24,7 @@ exports.analyzeResume = async (req, res, next) => {
         // ---------------------------------------------------------
         if (!currentUser.isRecruiter) {
             if (githubUsername.toLowerCase() !== currentUser.githubHandle.toLowerCase()) {
+                if (req.file) await fs.unlink(req.file.path).catch(() => {});
                 return res.status(403).json({
                     success: false,
                     message: "Security Alert: You can only analyze your own registered GitHub profile!"
@@ -28,25 +32,10 @@ exports.analyzeResume = async (req, res, next) => {
             }
         }
 
-        console.log(`🚀 Analysis started for: ${githubUsername} by ${currentUser.name}`);
+        console.log(`Analysis started for: ${githubUsername} by ${currentUser.name}`);
 
-        // 2. Cloudinary URL se PDF Text nikalna (The Fix!)
-        let resumeText = "";
-        try {
-            const cloudinaryUrl = req.file.path; // Cloudinary ka link
-            const response = await axios.get(cloudinaryUrl, { responseType: 'arraybuffer' });
-            const buffer = Buffer.from(response.data);
-            
-            const pdfData = await pdfParse(buffer);
-            resumeText = pdfData.text;
-            
-            if (!resumeText || resumeText.trim().length === 0) {
-                throw new Error("Could not extract text from PDF");
-            }
-        } catch (err) {
-            console.error("PDF Parsing Error:", err.message);
-            return res.status(500).json({ success: false, message: "Failed to read PDF from Cloudinary" });
-        }
+        // 2. Local PDF se text nikalna
+        const resumeText = await extractText(req.file.path);
 
         // 3. GitHub se data lana
         const githubData = await fetchGitHubData(githubUsername);
@@ -59,8 +48,7 @@ exports.analyzeResume = async (req, res, next) => {
             userId: req.user.id,
             githubUsername,
             jdText: jdText || "General Audit (No JD provided)",
-            resumePath: req.file.path, // Cloudinary URL save hoga
-
+            resumePath: 'deleted_after_analysis',
             trustScore: analysis.trustScore,
             atsScore: analysis.atsScore || 0,
             summary: analysis.analysisSummary,
@@ -72,7 +60,13 @@ exports.analyzeResume = async (req, res, next) => {
 
         await newAnalysis.save();
 
-        // 6. Final Response
+        // 6. PDF delete karna
+        if (req.file) {
+            await fs.unlink(req.file.path).catch(() => {});
+            console.log("Temporary Resume File Deleted");
+        }
+
+        // 7. Final Response
         res.status(200).json({
             success: true,
             candidate: githubData.profile.name || githubUsername,
@@ -82,16 +76,22 @@ exports.analyzeResume = async (req, res, next) => {
         });
 
     } catch (error) {
+        if (req.file) {
+            await fs.unlink(req.file.path).catch(() => {});
+        }
         console.error("Analysis Controller Error:", error.message);
         res.status(500).json({ success: false, message: error.message });
     }
 };
 
-// History route wahi rahega
 exports.getHistory = async (req, res) => {
     try {
         const history = await Analysis.find({ userId: req.user.id }).sort({ createdAt: -1 });
-        res.status(200).json({ success: true, count: history.length, data: history });
+        res.status(200).json({ 
+            success: true, 
+            count: history.length, 
+            data: history 
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
