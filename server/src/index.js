@@ -27,15 +27,15 @@ app.set('trust proxy', 1);
 
 // Standard CORS configuration
 const corsOptions = {
-    origin: [
-        'http://localhost:5173',
-        'https://resume-trust-ai-wccy.vercel.app' // Tera asli frontend URL
-    ],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    exposedHeaders: ['Set-Cookie'],
-    optionsSuccessStatus: 200
+  origin: [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    process.env.CLIENT_URL  // ← ye add karo
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
