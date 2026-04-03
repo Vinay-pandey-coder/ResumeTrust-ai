@@ -1,2 +1,16 @@
+# Sabhi search engines (Google, Bing, etc.) ke liye instructions
 User-agent: *
+
+# In pages ko Google search mein dikhao
 Allow: /
+Allow: /about
+Allow: /pricing
+Allow: /analyze
+
+# In pages ko Google scan na kare (Security ke liye)
+# Dashboard aur History login ke baad aate hain, inka indexing zaroori nahi hai
+Disallow: /dashboard
+Disallow: /api/
+
+# Apne sitemap ka rasta batayein
+Sitemap: https://resume-trust-ai-wccy.vercel.app/sitemap.xml
