@@ -1,5 +1,5 @@
 const axios = require('axios');
-const pdfParse = require('pdf-parse');
+const pdfParse = require('pdf-parse-fork');
 const { fetchGitHubData } = require('../services/githubService');
 const { analyzeProfile } = require('../services/openAiService');
 const Analysis = require('../models/Analysis');
