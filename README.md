@@ -315,5 +315,5 @@ MIT License — see [LICENSE](./LICENSE) for details.
 
 *Built with ❤️ by [Vinay Pandey](https://github.com/Vinay-pandey-coder)*
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://linkedin.com/in/your-profile)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/vinay-pandey-915310338/)
 [![GitHub](https://img.shields.io/badge/GitHub-Follow-black)](https://github.com/Vinay-pandey-coder)
