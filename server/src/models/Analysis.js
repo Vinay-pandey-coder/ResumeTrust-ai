@@ -2,15 +2,16 @@ const mongoose = require('mongoose');
 
 const AnalysisSchema = new mongoose.Schema({
     // Kis user ne analyze kiya (Relationship with User model)
-    userId: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User', 
-        required: true 
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
     githubUsername: {
         type: String,
         required: true
     },
+    fileHash: { type: String },
     // Job Description jo user ne input di thi
     jdText: {
         type: String,
@@ -47,9 +48,9 @@ const AnalysisSchema = new mongoose.Schema({
     redFlags: {
         type: [String] // Array of strings
     },
-    createdAt: { 
-        type: Date, 
-        default: Date.now 
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 });
 
