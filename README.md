@@ -1,6 +1,6 @@
 # ResumeTrust AI 🛡️
 
-![ResumeTrust AI Banner](./banner.png)
+![ResumeTrust AI Banner](./screenshots/Home.png)
 
 > **AI-powered resume verification platform** that combines ATS scoring with real-time GitHub analysis to build trust between candidates and recruiters.
 
@@ -293,7 +293,7 @@ cron.schedule('0 0 * * 0', async () => {
 
 | Home Page | Analysis Result | Dashboard |
 |-----------|----------------|-----------|
-| ![Home](./screenshots/home.png) | ![Result](./screenshots/result.png) | ![Dashboard](./screenshots/dashboard.png) |
+| ![Home](./screenshots/Home.png) | ![Result](./screenshots/Result.png) | ![Dashboard](./screenshots/Dashboard.png) |
 
 ---
 

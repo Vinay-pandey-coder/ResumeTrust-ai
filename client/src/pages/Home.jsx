@@ -6,7 +6,7 @@ import Input from '../components/UI/Input';
 import MetaData from '../components/SEO/MetaData';
 import { loginUser, registerUser } from '../services/api';
 
-const Home = ({ isLoggedIn, login, openLogin }) => {
+const Home = ({ isLoggedIn, login, openLogin, openRegister }) => {
   const [showModal, setShowModal] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -17,8 +17,8 @@ const Home = ({ isLoggedIn, login, openLogin }) => {
     email: '',
     password: '',
     isRecruiter: false,
-    githubHandle: '',      // [NEW FIELD]
-    linkedinProfile: ''    // [NEW FIELD]
+    githubHandle: '',
+    linkedinProfile: ''
   });
 
   useEffect(() => {
@@ -27,6 +27,13 @@ const Home = ({ isLoggedIn, login, openLogin }) => {
       setIsRegister(false);
     }
   }, [openLogin]);
+
+  useEffect(() => {
+    if (openRegister) {
+      setShowModal(true);
+      setIsRegister(true);  // ← Register mode
+    }
+  }, [openRegister]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -51,7 +58,6 @@ const Home = ({ isLoggedIn, login, openLogin }) => {
         });
         toast.success('Welcome back!');
       }
-
       login(response.user, response.token);
       setShowModal(false);
       navigate('/dashboard');
@@ -60,6 +66,25 @@ const Home = ({ isLoggedIn, login, openLogin }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Modal open karne ka helper
+  const openModal = (registerMode = false) => {
+    setIsRegister(registerMode);
+    setFormData({
+      name: '',
+      email: '',
+      password: '',
+      isRecruiter: false,
+      githubHandle: '',
+      linkedinProfile: ''
+    });
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    navigate('/');
   };
 
   return (
@@ -85,7 +110,7 @@ const Home = ({ isLoggedIn, login, openLogin }) => {
               Go to Dashboard
             </Button>
           ) : (
-            <Button onClick={() => setShowModal(true)} variant="primary">
+            <Button onClick={() => openModal(false)} variant="primary">
               Get Started Free
             </Button>
           )}
@@ -141,12 +166,12 @@ const Home = ({ isLoggedIn, login, openLogin }) => {
 
       {/* Auth Modal */}
       {showModal && (
-        <div className="modal-overlay flex-center" onClick={() => {
-          setShowModal(false);
-          navigate('/');
-        }}>
+        <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content card" onClick={e => e.stopPropagation()}>
-            <h2 className="modal-title">{isRegister ? 'Create Account' : 'Welcome Back'}</h2>
+
+            <h2 className="modal-title">
+              {isRegister ? 'Create Account' : 'Welcome Back'}
+            </h2>
             <p className="modal-subtitle text-secondary">
               {isRegister ? 'Start verifying your resume today.' : 'Login to access your dashboard.'}
             </p>
@@ -181,7 +206,6 @@ const Home = ({ isLoggedIn, login, openLogin }) => {
                 required
               />
 
-              {/* --- ROLE BASED FIELDS [START] --- */}
               {isRegister && (
                 <>
                   <div className="checkbox-group mb-4">
@@ -192,7 +216,9 @@ const Home = ({ isLoggedIn, login, openLogin }) => {
                       checked={formData.isRecruiter}
                       onChange={handleChange}
                     />
-                    <label htmlFor="isRecruiter" className="ml-2 text-secondary">I am a recruiter</label>
+                    <label htmlFor="isRecruiter" className="ml-2 text-secondary">
+                      I am a recruiter
+                    </label>
                   </div>
 
                   {formData.isRecruiter ? (
@@ -216,7 +242,6 @@ const Home = ({ isLoggedIn, login, openLogin }) => {
                   )}
                 </>
               )}
-              {/* --- ROLE BASED FIELDS [END] --- */}
 
               <Button type="submit" fullWidth loading={loading}>
                 {isRegister ? 'Sign Up' : 'Login'}
@@ -229,11 +254,22 @@ const Home = ({ isLoggedIn, login, openLogin }) => {
               </span>
               <button
                 className="text-accent ml-2 btn-link"
-                onClick={() => setIsRegister(!isRegister)}
+                onClick={() => {
+                  setIsRegister(!isRegister);
+                  setFormData({
+                    name: '',
+                    email: '',
+                    password: '',
+                    isRecruiter: false,
+                    githubHandle: '',
+                    linkedinProfile: ''
+                  });
+                }}
               >
                 {isRegister ? 'Login' : 'Sign Up'}
               </button>
             </div>
+
           </div>
         </div>
       )}

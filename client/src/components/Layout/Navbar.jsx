@@ -20,13 +20,7 @@ const Navbar = ({ isLoggedIn, user, onLogout, openLogin }) => {
   // [NEW]: Login/Register click handler logic
   const handleAuthClick = (isRegister = false) => {
     closeMenu();
-    // Agar hum pehle se /login par hain, toh state update trigger karne ke liye
-    // hum navigate('/') karke wapas navigate('/login') kar sakte hain ya
-    // seedha openLogin helper call kar sakte hain jo humne Home mein pass kiya tha.
-    if (openLogin) {
-      openLogin(isRegister);
-    }
-    navigate('/login');
+    navigate(isRegister ? '/register' : '/login');
   };
 
   // Close menu on route change
