@@ -307,6 +307,17 @@ cron.schedule('0 0 * * 0', async () => {
 
 ---
 
+## ⚠️ Disclaimer
+
+> [!IMPORTANT]
+> **This project is created for educational and portfolio purposes only.** > The author (**Vinay Pandey**) does not guarantee 100% accuracy in AI-generated scores or security against all possible vulnerabilities. 
+> 
+> - **Data Privacy:** We do not sell or share user data. Resumes are deleted from the server immediately after processing.
+> - **Liability:** The author is **NOT responsible** for any data leaks, security breaches, or damages caused by the use, modification, or redistribution of this code. 
+> - **Use at your own risk.**
+
+---
+
 ## 📄 License
 
 MIT License — see [LICENSE](./LICENSE) for details.
