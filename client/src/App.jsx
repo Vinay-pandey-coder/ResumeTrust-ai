@@ -12,6 +12,8 @@ const About = lazy(() => import('./pages/About'));
 const Analyze = lazy(() => import('./pages/Analyze'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Pricing = lazy(() => import('./pages/Pricing'));
+const Terms = lazy(() => import('./pages/Terms'));
+const Privacy = lazy(() => import('./pages/Privacy'));
 
 // ProtectedRoute: redirect unauthorized users to Home with login trigger
 const ProtectedRoute = ({ children, isLoggedIn }) => {
@@ -59,6 +61,8 @@ const App = () => {
             <Route path="/register" element={
               <Home user={user} isLoggedIn={isLoggedIn} login={login} openRegister={true} />
             } />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
 
             <Route
               path="/analyze"

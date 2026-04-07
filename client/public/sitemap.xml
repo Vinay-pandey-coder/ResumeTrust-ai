@@ -49,5 +49,13 @@
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+  <url>
+  <loc>https://resumetrustai.com/terms</loc>
+  <lastmod>2026-04-07</lastmod>
+  </url>
+  <url>
+  <loc>https://resumetrustai.com/privacy</loc>
+  <lastmod>2026-04-07</lastmod>
+  </url>
 
 </urlset>
