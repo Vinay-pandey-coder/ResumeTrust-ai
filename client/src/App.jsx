@@ -1,10 +1,15 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react'; // useEffect add kiya
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import ReactGA from "react-ga4"; // Google Analytics import
 import useAuth from './hooks/useAuth';
 import Navbar from './components/Layout/Navbar';
 import Footer from './components/Layout/Footer';
 import Loader from './components/UI/Loader';
 import { Toaster } from 'react-hot-toast';
+
+// Google Analytics Initialize (Tumhari ID)
+const TRACKING_ID = "G-6YP6JNQDH0"; 
+ReactGA.initialize(TRACKING_ID);
 
 // Lazy load pages for performance
 const Home = lazy(() => import('./pages/Home'));
@@ -26,6 +31,16 @@ const ProtectedRoute = ({ children, isLoggedIn }) => {
 const App = () => {
   const { user, loading, isLoggedIn, login, logout } = useAuth();
   const location = useLocation();
+
+  // --- Google Analytics Tracking Logic ---
+  useEffect(() => {
+    // Jab bhi URL change hoga (location.pathname), GA ko signal jayega
+    ReactGA.send({ 
+      hitType: "pageview", 
+      page: location.pathname + location.search 
+    });
+  }, [location]); 
+  // ----------------------------------------
 
   // If path is /login, we show Home with openLogin prop
   const isLoginPage = location.pathname === '/login';
