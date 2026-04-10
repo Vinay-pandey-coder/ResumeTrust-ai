@@ -2,11 +2,22 @@ const axios = require('axios');
 require('dotenv').config();
 
 exports.analyzeProfile = async (resumeText, githubData, jdText = "") => {
+    // 1. Logs for debugging
+    console.log("Resume Text Length:", resumeText ? resumeText.length : "UNDEFINED");
+    console.log("GitHub Data:", githubData ? "Received" : "MISSING");
+
     try {
         const apiKey = process.env.GEMINI_API_KEY;
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+        if (!apiKey) throw new Error("GEMINI_API_KEY missing in .env");
 
-        const finalJD = jdText.trim() || "Full Stack Web Developer (General MERN Stack Role)";
+       // Fix: Teri API list ke hisab se exact model name aur version
+        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+        // 3. Safety Fallbacks (Taki code crash na ho agar data undefined ho)
+        const safeResume = resumeText ? resumeText.substring(0, 4000) : "No text extracted from resume.";
+        const safeGithub = githubData ? JSON.stringify(githubData) : "No GitHub activity found.";
+        const finalJD = (jdText && jdText.trim()) || "Full Stack Web Developer (General MERN Stack Role)";
+        
         const currentDate = new Date().toISOString().split('T')[0];
 
         const prompt = `
@@ -15,8 +26,8 @@ exports.analyzeProfile = async (resumeText, githubData, jdText = "") => {
 
         Evaluate the candidate's resume against the Target JD.
 
-        RESUME: ${resumeText.substring(0, 4000)}
-        GITHUB: ${JSON.stringify(githubData)}
+        RESUME: ${safeResume}
+        GITHUB: ${safeGithub}
         JD: ${finalJD}
 
         IMPORTANT RULES FOR RED FLAGS:
@@ -44,12 +55,36 @@ exports.analyzeProfile = async (resumeText, githubData, jdText = "") => {
           "redFlags": ["string"]
         }`;
 
-        const response = await axios.post(url, { contents: [{ parts: [{ text: prompt }] }] });
+        // 4. API Call
+        const response = await axios.post(url, { 
+            contents: [{ parts: [{ text: prompt }] }] 
+        }, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        // Check if response structure is valid
+        if (!response.data.candidates || !response.data.candidates[0]) {
+            throw new Error("Gemini AI returned empty response");
+        }
+
         const aiText = response.data.candidates[0].content.parts[0].text;
+        
+        // 5. JSON Extraction
         const jsonMatch = aiText.match(/\{[\s\S]*\}/);
+        
+        if (!jsonMatch) {
+            console.log("Raw AI Text:", aiText); // Debugging for malformed responses
+            throw new Error("AI returned invalid JSON format");
+        }
+
         return JSON.parse(jsonMatch[0]);
+
     } catch (error) {
-        console.error("AI Service Error:", error.message);
-        throw new Error("AI Analysis failed: " + error.message);
+        // Detailed error logging
+        const status = error.response ? error.response.status : 'No Response';
+        const errorDetail = error.response ? JSON.stringify(error.response.data) : error.message;
+        
+        console.error(`AI Service Error [${status}]:`, errorDetail);
+        throw new Error(`AI Analysis failed: ${status} - ${errorDetail}`);
     }
 };
