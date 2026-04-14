@@ -1,15 +1,18 @@
-# Sabhi search engines (Google, Bing, etc.) ke liye instructions
+# Sabhi search engines ke liye instructions
 User-agent: *
 
 # In pages ko Google search mein dikhao
 Allow: /
 Allow: /about
 Allow: /pricing
-Allow: /analyze
+Allow: /terms
+Allow: /privacy
+Allow: /login
+Allow: /register
 
-# In pages ko Google scan na kare (Security ke liye)
-# Dashboard aur History login ke baad aate hain, inka indexing zaroori nahi hai
+# In pages ko Google scan na kare (Security & Privacy)
 Disallow: /dashboard
+Disallow: /analyze
 Disallow: /api/
 
 # Apne sitemap ka rasta batayein
