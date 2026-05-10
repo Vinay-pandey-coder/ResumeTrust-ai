@@ -1,26 +1,55 @@
 const axios = require('axios');
 require('dotenv').config();
 
+const API_KEYS = [
+    process.env.GEMINI_API_KEY_1,
+    process.env.GEMINI_API_KEY_2,
+    process.env.GEMINI_API_KEY_3,
+].filter(Boolean);
+
+let currentKeyIndex = 0;
+
+const getNextKey = () => {
+    const key = API_KEYS[currentKeyIndex];
+    console.log(`🔑 Using API Key: ${currentKeyIndex + 1} of ${API_KEYS.length}`);
+    currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
+    return key;
+};
+
+const callGeminiAPI = async (apiKey, prompt) => {
+    // const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite-preview-02-05:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const response = await axios.post(url, {
+        contents: [{ parts: [{ text: prompt }] }]
+    }, {
+        headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (!response.data.candidates || !response.data.candidates[0]) {
+        throw new Error("Gemini AI returned empty response");
+    }
+
+    const aiText = response.data.candidates[0].content.parts[0].text;
+    const jsonMatch = aiText.match(/\{[\s\S]*\}/);
+
+    if (!jsonMatch) {
+        console.log("Raw AI Text:", aiText);
+        throw new Error("AI returned invalid JSON format");
+    }
+
+    return JSON.parse(jsonMatch[0]);
+};
+
 exports.analyzeProfile = async (resumeText, githubData, jdText = "") => {
-    // 1. Logs for debugging
     console.log("Resume Text Length:", resumeText ? resumeText.length : "UNDEFINED");
     console.log("GitHub Data:", githubData ? "Received" : "MISSING");
 
-    try {
-        const apiKey = process.env.GEMINI_API_KEY;
-        if (!apiKey) throw new Error("GEMINI_API_KEY missing in .env");
+    const safeResume = resumeText ? resumeText.substring(0, 4000) : "No text extracted from resume.";
+    const safeGithub = githubData ? JSON.stringify(githubData) : "No GitHub activity found.";
+    const finalJD = (jdText && jdText.trim()) || "Full Stack Web Developer (General MERN Stack Role)";
+    const currentDate = new Date().toISOString().split('T')[0];
 
-        // Fix: Teri API list ke hisab se exact model name aur version
-        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-
-        // 3. Safety Fallbacks (Taki code crash na ho agar data undefined ho)
-        const safeResume = resumeText ? resumeText.substring(0, 4000) : "No text extracted from resume.";
-        const safeGithub = githubData ? JSON.stringify(githubData) : "No GitHub activity found.";
-        const finalJD = (jdText && jdText.trim()) || "Full Stack Web Developer (General MERN Stack Role)";
-
-        const currentDate = new Date().toISOString().split('T')[0];
-
-        const prompt = `
+    const prompt = `
         You are an Advanced Technical Auditor and ATS Expert.
         Today's date is: ${currentDate}
 
@@ -55,36 +84,44 @@ exports.analyzeProfile = async (resumeText, githubData, jdText = "") => {
           "redFlags": ["string"]
         }`;
 
-        // 4. API Call
-        const response = await axios.post(url, {
-            contents: [{ parts: [{ text: prompt }] }]
-        }, {
-            headers: { 'Content-Type': 'application/json' }
-        });
+    // Saari keys try karo ek ek karke
+    let lastError = null;
+    const totalKeys = API_KEYS.length;
 
-        // Check if response structure is valid
-        if (!response.data.candidates || !response.data.candidates[0]) {
-            throw new Error("Gemini AI returned empty response");
+    for (let attempt = 0; attempt < totalKeys; attempt++) {
+        const apiKey = getNextKey();
+
+        try {
+            console.log(`🚀 Analysis attempt ${attempt + 1} of ${totalKeys}...`);
+            const result = await callGeminiAPI(apiKey, prompt);
+            console.log(`✅ Analysis successful with Key ${currentKeyIndex === 0 ? totalKeys : currentKeyIndex} of ${totalKeys}`);
+            return result;
+
+        } catch (error) {
+            const status = error.response?.status;
+            const errorDetail = error.response
+                ? JSON.stringify(error.response.data)
+                : error.message;
+
+            if (status === 429) {
+                console.warn(`⚠️  Key ${attempt + 1} ki limit khatam ho gayi (429)! Next key try kar raha hoon...`);
+                lastError = error;
+                continue; // next key try karo
+            }
+
+            if (status === 503 || (error.message && error.message.includes('massive traffic'))) {
+                console.warn(`⚠️  Key ${attempt + 1} pe server overloaded (503)! Next key try kar raha hoon...`);
+                lastError = error;
+                continue; // next key try karo
+            }
+
+            // Koi aur error hai — seedha throw karo
+            console.error(`❌ AI Service Error [${status}]:`, errorDetail);
+            throw new Error(`AI Analysis failed: ${status} - ${errorDetail}`);
         }
-
-        const aiText = response.data.candidates[0].content.parts[0].text;
-
-        // 5. JSON Extraction
-        const jsonMatch = aiText.match(/\{[\s\S]*\}/);
-
-        if (!jsonMatch) {
-            console.log("Raw AI Text:", aiText); // Debugging for malformed responses
-            throw new Error("AI returned invalid JSON format");
-        }
-
-        return JSON.parse(jsonMatch[0]);
-
-    } catch (error) {
-        // Detailed error logging
-        const status = error.response ? error.response.status : 'No Response';
-        const errorDetail = error.response ? JSON.stringify(error.response.data) : error.message;
-
-        console.error(`AI Service Error [${status}]:`, errorDetail);
-        throw new Error(`AI Analysis failed: ${status} - ${errorDetail}`);
     }
+
+    // Saari keys fail ho gayi
+    console.error("❌ Saari API keys fail ho gayi hain! Kal reset hoga.");
+    throw new Error("All API keys exhausted. Please try again tomorrow.");
 };

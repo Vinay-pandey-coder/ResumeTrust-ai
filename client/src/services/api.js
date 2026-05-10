@@ -25,13 +25,9 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Only redirect if it's a 401 Unauthorized but not a background check failure (if we want to be safe)
-    // Actually, simple logout is better
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      // Use window.location.href carefully; it may cause page reloads
-      // Alternatively, we could just clear state, but this works as a catch-all
       if (window.location.pathname !== '/' && window.location.pathname !== '/login') {
         window.location.href = '/';
       }
@@ -39,7 +35,6 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
 
 // Auth services
 export const registerUser = async (data) => {
@@ -54,6 +49,36 @@ export const loginUser = async (data) => {
 
 export const getMe = async () => {
   const response = await api.get('/auth/me');
+  return response.data;
+};
+
+// [NEW] Profile update
+export const updateProfile = async (data) => {
+  const response = await api.put('/auth/profile', data);
+  return response.data;
+};
+
+// [NEW] Account delete
+export const deleteAccount = async (data) => {
+  const response = await api.delete('/auth/account', { data });
+  return response.data;
+};
+
+// [NEW] Forgot Password — OTP bhejo
+export const forgotPassword = async (data) => {
+  const response = await api.post('/auth/forgot-password', data);
+  return response.data;
+};
+
+// [NEW] Verify OTP
+export const verifyOtp = async (data) => {
+  const response = await api.post('/auth/verify-otp', data);
+  return response.data;
+};
+
+// [NEW] Reset Password
+export const resetPassword = async (data) => {
+  const response = await api.post('/auth/reset-password', data);
   return response.data;
 };
 

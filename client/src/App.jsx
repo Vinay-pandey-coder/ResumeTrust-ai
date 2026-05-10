@@ -1,14 +1,14 @@
-import React, { Suspense, lazy, useEffect } from 'react'; // useEffect add kiya
+import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import ReactGA from "react-ga4"; // Google Analytics import
+import ReactGA from "react-ga4";
 import useAuth from './hooks/useAuth';
 import Navbar from './components/Layout/Navbar';
 import Footer from './components/Layout/Footer';
 import Loader from './components/UI/Loader';
 import { Toaster } from 'react-hot-toast';
 
-// Google Analytics Initialize (Tumhari ID)
-const TRACKING_ID = "G-6YP6JNQDH0"; 
+// Google Analytics Initialize
+const TRACKING_ID = "G-6YP6JNQDH0";
 ReactGA.initialize(TRACKING_ID);
 
 // Lazy load pages for performance
@@ -19,8 +19,9 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
+const Profile = lazy(() => import('./pages/Profile')); // [NEW]
 
-// ProtectedRoute: redirect unauthorized users to Home with login trigger
+// ProtectedRoute: redirect unauthorized users to Home
 const ProtectedRoute = ({ children, isLoggedIn }) => {
   if (!isLoggedIn) {
     return <Navigate to="/" replace />;
@@ -32,14 +33,14 @@ const App = () => {
   const { user, loading, isLoggedIn, login, logout } = useAuth();
   const location = useLocation();
 
-  // --- Google Analytics Tracking Logic ---
+  // Google Analytics Tracking
   useEffect(() => {
-    // Jab bhi URL change hoga (location.pathname), GA ko signal jayega
-    ReactGA.send({ 
-      hitType: "pageview", 
-      page: location.pathname + location.search 
+  // Jab bhi URL change hoga (location.pathname), GA ko signal jayega
+    ReactGA.send({
+      hitType: "pageview",
+      page: location.pathname + location.search
     });
-  }, [location]); 
+  }, [location]);
   // ----------------------------------------
 
   // If path is /login, we show Home with openLogin prop
@@ -66,7 +67,7 @@ const App = () => {
 
       <Navbar user={user} isLoggedIn={isLoggedIn} onLogout={logout} />
 
-      <main className="flex-grow container py-8 mt-20">
+      <main className="flex-grow mt-20">
         <Suspense fallback={<Loader />}>
           <Routes>
             <Route path="/" element={<Home user={user} isLoggedIn={isLoggedIn} login={login} openLogin={isLoginPage} />} />
@@ -93,6 +94,16 @@ const App = () => {
               element={
                 <ProtectedRoute isLoggedIn={isLoggedIn}>
                   <Dashboard user={user} />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* [NEW] Profile Route — Protected */}
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                  <Profile user={user} logout={logout} />
                 </ProtectedRoute>
               }
             />

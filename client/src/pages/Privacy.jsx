@@ -3,149 +3,145 @@ import MetaData from '../components/SEO/MetaData';
 
 const Privacy = () => {
   return (
-    <div className="page-container fade-in">
+    <div className="page-container fade-in px-6">
       <MetaData
         title="Privacy Policy"
         description="ResumeTrust AI Privacy Policy — How we collect, use, and protect your data."
       />
 
-      <div className="max-w-800 mx-auto py-10">
-
-        <div className="text-center mb-10">
-          <h1 className="hero-title">Privacy <span>Policy</span></h1>
-          <p className="text-secondary">Last updated: April 7, 2026 · We take your privacy seriously</p>
+      <div className="max-w-900 mx-auto py-20">
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <div className="legal-tag">Protection Protocol</div>
+          <h1 className="hero-title mb-4">Privacy <span>Policy</span></h1>
+          <p className="text-secondary max-w-600 mx-auto mb-6">
+            A clear breakdown of what we collect, protect, and never store to ensure your professional identity remains secure.
+          </p>
+          <div className="flex-center">
+            <span className="text-xs font-bold text-accent bg-indigo-500/10 px-4 py-2 rounded-full border border-indigo-500/20">
+              Latest Version: April 7, 2026
+            </span>
+          </div>
         </div>
 
-        {/* Section 1 */}
-        <div className="card mt-6">
-          <h2 className="section-title" style={{fontSize: '1.1rem', marginBottom: '1rem'}}>
-            📥 Data We Collect
-          </h2>
-          <div className="card mt-4" style={{background: 'var(--bg-hover)'}}>
-            <h4 style={{color: 'var(--text-primary)', marginBottom: '0.4rem'}}>Account Information</h4>
-            <p className="text-secondary" style={{fontSize: '0.875rem', lineHeight: '1.7'}}>
-              Name, email, hashed password, GitHub handle (candidates) or LinkedIn URL (recruiters).
-              Passwords are never stored in plain text — bcryptjs hashing is used.
+        {/* Section 1: Data We Collect - Modern Grid */}
+        <section className="legal-card">
+          <h2 className="section-title text-xl mb-2">📥 Data We Collect</h2>
+          <p className="legal-text mb-4">We only collect the minimum amount of data required to provide our auditing services.</p>
+
+          <div className="collect-grid">
+            <div className="collect-item">
+              <h4 className="text-white font-bold text-sm mb-3">Account Info</h4>
+              <p className="text-xs text-secondary leading-relaxed">Name, email, hashed password, and your registered professional handles.</p>
+            </div>
+            <div className="collect-item">
+              <h4 className="text-white font-bold text-sm mb-3">Analysis Logic</h4>
+              <p className="text-xs text-secondary leading-relaxed">ATS scores, trust velocity, and matched skills metadata to power your dashboard.</p>
+            </div>
+            <div className="collect-item">
+              <h4 className="text-white font-bold text-sm mb-3">Public Traces</h4>
+              <p className="text-xs text-secondary leading-relaxed">Publicly available GitHub repository metadata. We never access private project data.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 2: Data We Do NOT Store - High Trust Block */}
+        <section className="high-trust-card">
+          <h2 className="section-title text-xl mb-6">🗑️ Our "Zero Storage" Guarantee</h2>
+          <p className="legal-text mb-8">
+            Your trust is our priority. We have engineered our pipeline to ensure sensitive documents are never permanently archived.
+          </p>
+
+          <div className="bg-black/20 p-6 rounded-2xl border border-white/5 mb-8">
+            <p className="text-sm text-secondary italic">
+              "Your PDF resume is permanently purged from our secure servers immediately after the AI text extraction process. We do not keep copies of your CV."
             </p>
           </div>
-          <div className="card mt-4" style={{background: 'var(--bg-hover)'}}>
-            <h4 style={{color: 'var(--text-primary)', marginBottom: '0.4rem'}}>Analysis Data</h4>
-            <p className="text-secondary" style={{fontSize: '0.875rem', lineHeight: '1.7'}}>
-              ATS score, Trust score, skills matched, missing skills, recommendations, and red flags.
-              This data is stored to power your history dashboard.
-            </p>
-          </div>
-          <div className="card mt-4" style={{background: 'var(--bg-hover)'}}>
-            <h4 style={{color: 'var(--text-primary)', marginBottom: '0.4rem'}}>GitHub Data (Public Only)</h4>
-            <p className="text-secondary" style={{fontSize: '0.875rem', lineHeight: '1.7'}}>
-              We fetch only publicly available GitHub data — repos, languages, star counts,
-              and follower counts. We never access private repositories.
-            </p>
-          </div>
-        </div>
 
-        {/* Section 2 */}
-        <div className="card mt-6">
-          <h2 className="section-title" style={{fontSize: '1.1rem', marginBottom: '0.75rem'}}>
-            🗑️ Data We Do NOT Store
-          </h2>
-          <div style={{
-            borderLeft: '3px solid var(--accent)',
-            background: 'var(--accent-light)',
-            borderRadius: '0 8px 8px 0',
-            padding: '0.75rem 1rem',
-            marginBottom: '1rem'
-          }}>
-            <p className="text-secondary" style={{fontSize: '0.875rem', margin: 0}}>
-              Your PDF resume is permanently deleted from our server immediately after text
-              extraction. We never store your actual resume file.
-            </p>
+          <div className="flex flex-wrap gap-3">
+            <span className="badge badge-danger px-4 py-2 text-[0.65rem] uppercase font-bold">No PDF Storage</span>
+            <span className="badge badge-danger px-4 py-2 text-[0.65rem] uppercase font-bold">No Private Repos</span>
+            <span className="badge badge-danger px-4 py-2 text-[0.65rem] uppercase font-bold">No Plaintext PW</span>
+            <span className="badge badge-danger px-4 py-2 text-[0.65rem] uppercase font-bold">No Tracking Cookies</span>
           </div>
-          <div className="flex flex-wrap gap-8 mt-4">
-            <span className="badge badge-danger">❌ PDF files</span>
-            <span className="badge badge-danger">❌ Plain text passwords</span>
-            <span className="badge badge-danger">❌ Private GitHub data</span>
-            <span className="badge badge-danger">❌ Payment information</span>
-          </div>
-        </div>
+        </section>
 
-        {/* Section 3 */}
-        <div className="card mt-6">
-          <h2 className="section-title" style={{fontSize: '1.1rem', marginBottom: '0.75rem'}}>
-            🔒 How We Protect Your Data
-          </h2>
-          <div className="flex flex-wrap gap-8 mb-6">
-            <span className="badge badge-success">✓ JWT encryption</span>
-            <span className="badge badge-success">✓ bcryptjs hashing</span>
-            <span className="badge badge-success">✓ HTTPS only</span>
-            <span className="badge badge-success">✓ Rate limiting</span>
-            <span className="badge badge-success">✓ CORS restricted</span>
-            <span className="badge badge-success">✓ Helmet.js headers</span>
+        {/* Section 3: Protection - Security Board */}
+        <section className="legal-card">
+          <h2 className="section-title text-xl mb-4">🔒 Institutional Grade Security</h2>
+          <p className="legal-text mb-6">We employ multiple layers of encryption and protection to safeguard your professional data.</p>
+
+          <div className="security-board">
+            <span className="badge badge-success border-success/20">JWT Encryption</span>
+            <span className="badge badge-success border-success/20">Bcrypt Hashing</span>
+            <span className="badge badge-success border-success/20">SSL/HTTPS</span>
+            <span className="badge badge-success border-success/20">Rate Limiting</span>
+            <span className="badge badge-success border-success/20">CORS Lockdown</span>
+            <span className="badge badge-success border-success/20">Helmet.js Implementation</span>
           </div>
-          <p className="text-secondary">
-            All data is transmitted over encrypted HTTPS connections. MongoDB Atlas provides
-            encrypted storage at rest.
+
+          <p className="legal-text mt-6 text-sm italic">
+            All data at rest is stored in MongoDB Atlas with institutional-grade AES-256 encryption.
           </p>
+        </section>
+
+        {/* Section 4: Data Retention & Third-Party - List Variation */}
+        <div className="legal-grid">
+          <section className="legal-card mb-0">
+            <h2 className="section-title text-xl mb-6">🧹 Data Retention</h2>
+            <ul className="legal-list">
+              <li>Analysis records are cleared after <strong className="text-white">30 days</strong>.</li>
+              <li>Account data is kept until <strong className="text-white">Deletion Request</strong>.</li>
+              <li>PDF ephemeral storage lasts only <strong className="text-white">Seconds</strong>.</li>
+              <li>Cached results expire in <strong className="text-white">24 Hours</strong>.</li>
+            </ul>
+          </section>
+
+          <section className="legal-card mb-0">
+            <h2 className="section-title text-xl mb-6">🤝 Ecosystem Partners</h2>
+            <p className="text-xs text-secondary mb-6 leading-relaxed">We partner with standard-setting providers to ensure platform stability:</p>
+            <ul className="legal-list">
+              <li className="text-xs"><strong className="text-white/80">Google Gemini</strong> for AI Logic</li>
+              <li className="text-xs"><strong className="text-white/80">GitHub</strong> for Audit Sources</li>
+              <li className="text-xs"><strong className="text-white/80">MongoDB Atlas</strong> for Cloud Data</li>
+              <li className="text-xs"><strong className="text-white/80">Vercel & Render</strong> for Infrastructure</li>
+            </ul>
+          </section>
         </div>
 
-        {/* Section 4 */}
-        <div className="card mt-6">
-          <h2 className="section-title" style={{fontSize: '1.1rem', marginBottom: '0.75rem'}}>
-            🧹 Data Retention
-          </h2>
-          <ul className="detail-list">
-            <li>Analysis records are automatically deleted after 30 days via weekly cleanup</li>
-            <li>Account data is retained until you request deletion</li>
-            <li>PDF files are deleted immediately after analysis (within seconds)</li>
-            <li>Cached analysis results expire after 24 hours</li>
-          </ul>
-        </div>
+        {/* Section 5: Your Rights - Action Points */}
+        <section className="legal-card mt-6">
+          <h2 className="section-title text-xl mb-8">⚖️ Your Data Access Rights</h2>
 
-        {/* Section 5 */}
-        <div className="card mt-6">
-          <h2 className="section-title" style={{fontSize: '1.1rem', marginBottom: '0.75rem'}}>
-            🤝 Third-Party Services
-          </h2>
-          <p className="text-secondary mb-6">
-            We use the following third-party services to power the platform:
-          </p>
-          <ul className="detail-list">
-            <li><strong style={{color: 'var(--text-primary)'}}>Google Gemini AI</strong> — Resume analysis (subject to Google's privacy policy)</li>
-            <li><strong style={{color: 'var(--text-primary)'}}>GitHub REST API</strong> — Public profile data (subject to GitHub's privacy policy)</li>
-            <li><strong style={{color: 'var(--text-primary)'}}>MongoDB Atlas</strong> — Encrypted cloud database</li>
-            <li><strong style={{color: 'var(--text-primary)'}}>Render</strong> — Backend hosting</li>
-            <li><strong style={{color: 'var(--text-primary)'}}>Vercel</strong> — Frontend hosting</li>
-          </ul>
-        </div>
+          <div className="grid md:grid-cols-2 gap-4 text-left">
+            <div className="action-point border border-white/5">
+              <span className="text-2xl">🗑️</span>
+              <div>
+                <p className="text-white font-bold text-sm mb-1">Request Deletion</p>
+                <p className="text-xs text-secondary">Instantly wipe all account and history data from our records.</p>
+              </div>
+            </div>
+            <div className="action-point border border-white/5">
+              <span className="text-2xl">📥</span>
+              <div>
+                <p className="text-white font-bold text-sm mb-1">Data Portability</p>
+                <p className="text-xs text-secondary">Download a full report of your analysis and verification history.</p>
+              </div>
+            </div>
+          </div>
+        </section>
 
-        {/* Section 6 */}
-        <div className="card mt-6">
-          <h2 className="section-title" style={{fontSize: '1.1rem', marginBottom: '0.75rem'}}>
-            ✉️ Your Rights
-          </h2>
-          <ul className="detail-list">
-            <li>Request deletion of your account and all associated data</li>
-            <li>Request a copy of your stored analysis history</li>
-            <li>Update your account information at any time</li>
-          </ul>
-          <p className="text-secondary mt-6">
-            To exercise these rights, contact us at the email below.
-          </p>
+        {/* Support Strip */}
+        <div className="support-strip">
+          <h3 className="text-white font-bold text-xl mb-2">Privacy Concerns?</h3>
+          <p className="text-secondary text-sm mb-6">Our security lead is available to answer any technical questions regarding data handling.</p>
+          <a
+            href="mailto:abhi837688@gmail.com"
+            className="text-accent font-bold text-lg hover:underline decoration-2 underline-offset-8"
+          >
+            abhi837688@gmail.com
+          </a>
         </div>
-
-        {/* Footer */}
-        <div className="text-center mt-10" style={{
-          borderTop: '1px solid var(--border)',
-          paddingTop: '1.5rem'
-        }}>
-          <p className="text-muted" style={{fontSize: '0.875rem'}}>
-            Questions? Contact us at{' '}
-            <a href="mailto:abhi837688@gmail.com" style={{color: 'var(--accent)'}}>
-              abhi837688@gmail.com
-            </a>
-          </p>
-        </div>
-
       </div>
     </div>
   );

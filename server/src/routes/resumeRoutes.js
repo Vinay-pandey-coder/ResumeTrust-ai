@@ -17,14 +17,14 @@ const validateAnalyze = [
         .optional()
         .isLength({ min: 10 })
         .withMessage('Job Description (JD) thoda bada likho bhai (min 10 chars)'),
-    
+
     // Errors check karne wala logic
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ 
-                success: false, 
-                errors: errors.array().map(err => err.msg) 
+            return res.status(400).json({
+                success: false,
+                errors: errors.array().map(err => err.msg)
             });
         }
         next();
@@ -35,12 +35,12 @@ const validateAnalyze = [
 // [ROUTES]
 // ---------------------------------------------------------
 
-// @route   POST /api/resume/analyze
-// @desc    Full Analysis (Resume + GitHub + JD Match)
+// POST /api/resume/analyze
+// Full Analysis (Resume + GitHub + JD Match)
 router.post('/analyze', protect, upload.single('resume'), validateAnalyze, analyzeResume);
 
-// @route   GET /api/resume/history
-// @desc    Get User's Past Analysis Results
+// GET /api/resume/history
+// Get User's Past Analysis Results
 router.get('/history', protect, getHistory);
 
 module.exports = router;

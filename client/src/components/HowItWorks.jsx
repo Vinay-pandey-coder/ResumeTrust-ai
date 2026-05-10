@@ -4,96 +4,25 @@ const HowItWorks = () => {
   const [activeTab, setActiveTab] = useState('candidate');
 
   const candidateSteps = [
-    {
-      num: 1, color: 'purple',
-      title: 'Register as candidate',
-      desc: 'Name, email, password + GitHub handle (compulsory). Handle locked to your profile permanently.',
-      tags: ['isRecruiter: false', 'githubHandle saved to DB']
-    },
-    {
-      num: 2, color: 'teal',
-      title: 'Go to Analyze page',
-      desc: "GitHub handle auto-filled and locked. Cannot enter anyone else's handle — backend enforces this.",
-      tags: ['handle pre-filled', 'input disabled']
-    },
-    {
-      num: 3, color: 'green',
-      title: 'Upload PDF + paste JD',
-      desc: 'Upload resume PDF (max 5MB). Optionally paste job description for ATS matching.',
-      tags: ['PDF only 5MB', 'JD optional']
-    },
-    {
-      num: 4, color: 'amber',
-      title: 'AI analysis runs',
-      desc: 'PDF parsed → GitHub fetched → Gemini AI → ATS score, Trust score, skills, red flags.',
-      tags: ['Gemini 2.5 Flash', 'GitHub API', 'pdf-parse-fork']
-    },
-    {
-      num: 5, color: 'green',
-      title: 'Results + history saved',
-      desc: 'PDF deleted immediately. Results saved to MongoDB. View on Dashboard.',
-      tags: ['PDF auto-deleted', 'MongoDB history']
-    }
+    { num: 1, title: 'Register Account', desc: 'Securely join as a candidate. Your GitHub handle is verified and locked to your identity permanently.' },
+    { num: 2, title: 'Identity Pre-fill', desc: 'Navigating to Analyze pre-fills your handle. No one can spoof your identity — backend enforced.' },
+    { num: 3, title: 'Target Audit', desc: 'Upload your latest resume PDF and optionally paste the Job Description for a precise ATS match.' },
+    { num: 4, title: 'AI Engine Compute', desc: 'Gemini AI parses content, fetches live GitHub data, and computes your Trust & ATS scores.' },
+    { num: 5, title: 'History & Privacy', desc: 'Raw PDF is deleted. Resulting audit is saved to your dashboard for long-term tracking.' }
   ];
 
   const recruiterSteps = [
-    {
-      num: 1, color: 'purple',
-      title: 'Register as recruiter',
-      desc: 'Check "I am a recruiter" during registration. LinkedIn URL required instead of GitHub.',
-      tags: ['isRecruiter: true', 'linkedinProfile saved']
-    },
-    {
-      num: 2, color: 'teal',
-      title: 'Analyze any candidate',
-      desc: "GitHub username is open — enter any candidate's handle. No restriction applies.",
-      tags: ['any username allowed', 'input not disabled']
-    },
-    {
-      num: 3, color: 'amber',
-      title: 'Same AI analysis runs',
-      desc: 'Identical flow — PDF parse → GitHub → Gemini AI → full scores and breakdown.',
-      tags: ['same AI pipeline', 'ATS + Trust scores']
-    },
-    {
-      num: 4, color: 'green',
-      title: 'Results saved to history',
-      desc: "Each analysis stored under recruiter's account. Dashboard shows all candidates analyzed.",
-      tags: ['stored by userId', 'expandable cards']
-    }
+    { num: 1, title: 'Industrial Account', desc: 'Register with LinkedIn. Recruiter status grants access to verify any public engineering profile.' },
+    { num: 2, title: 'Universal Audit', desc: 'Enter any candidate handle. No locking applies — verify potential hires in seconds.' },
+    { num: 3, title: 'Deep Logic Check', desc: 'Gemini AI executes the full suite: pattern detection, skill mismatching, and red flag spotting.' },
+    { num: 4, title: 'Bulk Dashboard', desc: 'Store multiple candidates in one view. Compare audit results and make data-driven decisions.' }
   ];
 
   const securitySteps = [
-    {
-      num: 1, color: 'danger',
-      title: 'Candidate GitHub lock',
-      desc: 'Backend rejects 403 if candidate submits different username than registered — even if frontend bypassed.',
-      tags: ['403 if mismatch', 'backend enforced']
-    },
-    {
-      num: 2, color: 'purple',
-      title: 'JWT auth on every route',
-      desc: 'All protected routes need Bearer token. Invalid token → 401 → auto logout and redirect.',
-      tags: ['30 day expiry', 'verify on every request']
-    },
-    {
-      num: 3, color: 'amber',
-      title: 'PDF auto-deleted',
-      desc: 'Resume deleted after text extraction. Cleanup runs even if server crashes mid-way.',
-      tags: ['deleted after parse', 'cleanup in catch block']
-    },
-    {
-      num: 4, color: 'teal',
-      title: 'Rate limiting',
-      desc: 'Max 100 requests per IP in 15 minutes. Prevents abuse and API quota exhaustion.',
-      tags: ['100 req / 15 min', 'express-rate-limit']
-    },
-    {
-      num: 5, color: 'green',
-      title: 'CORS locked',
-      desc: 'Backend only accepts requests from localhost:5173. All other origins blocked.',
-      tags: ['origin whitelist', 'helmet headers']
-    }
+    { num: 1, title: 'Identity Lockdown', desc: 'Bypassing frontend results in a 403. Identity is validated via JWT at the database level.' },
+    { num: 2, title: 'Session Integrity', desc: 'Every request requires a secure Bearer token. Expired sessions are auto-redirected to Login.' },
+    { num: 3, title: 'Zero Persistence', desc: 'Resume files exist only in memory during parsing. Immediate cleanup logic runs for every request.' },
+    { num: 4, title: 'Rate Protection', desc: 'Engineered against abuse. 100 requests per 15-minute window per IP to keep the system fast.' }
   ];
 
   const allSteps = {
@@ -102,42 +31,30 @@ const HowItWorks = () => {
     security: securitySteps
   };
 
-  const colorMap = {
-    purple: 'hiw-purple',
-    teal:   'hiw-teal',
-    green:  'hiw-green',
-    amber:  'hiw-amber',
-    danger: 'hiw-danger',
-  };
-
   return (
-    <section className="mt-10">
-      <h2 className="section-title">How It Works</h2>
-
-      <div className="hiw-tabs flex gap-8 mb-10">
+    <section>
+      <h2 className="section-title text-center mb-8">The Pipeline</h2>
+      
+      <div className="hiw-tabs flex justify-center mb-12">
         {['candidate', 'recruiter', 'security'].map(tab => (
           <button
             key={tab}
             className={`hiw-tab ${activeTab === tab ? 'active' : ''}`}
             onClick={() => setActiveTab(tab)}
+            style={{ margin: '0 8px' }}
           >
-            {tab === 'candidate' ? 'Candidate' : tab === 'recruiter' ? 'Recruiter' : 'Security'}
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
           </button>
         ))}
       </div>
 
-      <div className="card">
+      <div className="v-timeline-container max-w-800 mx-auto">
         {allSteps[activeTab].map((step) => (
-          <div key={step.num} className="hiw-step">
-            <div className={`hiw-num ${colorMap[step.color]}`}>{step.num}</div>
-            <div className="hiw-content">
-              <h4 className="hiw-title">{step.title}</h4>
-              <p className="hiw-desc text-secondary">{step.desc}</p>
-              <div className="flex flex-wrap gap-8">
-                {step.tags.map((tag, i) => (
-                  <span key={i} className="badge badge-accent">{tag}</span>
-                ))}
-              </div>
+          <div key={step.num} className="v-timeline-item fade-in">
+            <div className="v-node-circle">{step.num}</div>
+            <div className="v-content-card">
+              <h4 className="font-bold text-lg mb-2 text-white">{step.title}</h4>
+              <p className="text-secondary text-sm leading-relaxed">{step.desc}</p>
             </div>
           </div>
         ))}

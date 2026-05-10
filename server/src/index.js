@@ -1,20 +1,22 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+dotenv.config();
 const helmet = require('helmet');
 const compression = require('compression');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
-const cron = require('node-cron'); // [NEW] Cron import
+const cron = require('node-cron');
+const session = require('express-session');        // [NEW]
+const passport = require('./config/passport');     // [NEW]
 
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const resumeRoutes = require('./routes/resumeRoutes');
 const errorHandler = require('./utils/errorHandler');
-const Analysis = require('./models/Analysis'); // [NEW] Model import cleanup ke liye
+const Analysis = require('./models/Analysis');
 
-dotenv.config();
-console.log("Check API Key:", process.env.GEMINI_API_KEY ? "Key Loaded ✅" : "Key Not Found ❌");
+console.log("Check API Key:", process.env.GEMINI_API_KEY_1 ? "Key Loaded ✅" : process.env.GEMINI_API_KEY_2 ? "Key Loaded ✅" : process.env.GEMINI_API_KEY_3 ? "Key Loaded ✅" : "Key Not Found ❌");
 
 connectDB();
 
@@ -50,6 +52,22 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));
+
+// [NEW] Session — CORS ke baad, passport se pehle
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'resumetrust_secret_123',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false,
+    httpOnly: true,
+    maxAge: 5 * 60 * 1000
+  }
+}));
+
+// [NEW] Passport initialize
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }

@@ -4,6 +4,7 @@ import Button from '../UI/Button';
 
 const Navbar = ({ isLoggedIn, user, onLogout, openLogin }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const navRef = useRef(null);
@@ -17,11 +18,19 @@ const Navbar = ({ isLoggedIn, user, onLogout, openLogin }) => {
     navigate('/');
   };
 
-  // [NEW]: Login/Register click handler logic
   const handleAuthClick = (isRegister = false) => {
     closeMenu();
     navigate(isRegister ? '/register' : '/login');
   };
+
+  // [NEW]: Scroll Listener
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Close menu on route change
   useEffect(() => {
@@ -39,8 +48,11 @@ const Navbar = ({ isLoggedIn, user, onLogout, openLogin }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Simple active link check helper
+  const isActive = (path) => location.pathname === path ? 'active' : '';
+
   return (
-    <nav className="navbar" ref={navRef}>
+    <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`} ref={navRef}>
       <div className="container nav-container">
         <Link to="/" className="nav-logo" onClick={closeMenu}>
           ResumeTrust <span>AI</span>
@@ -60,27 +72,26 @@ const Navbar = ({ isLoggedIn, user, onLogout, openLogin }) => {
         {/* Navigation Menu */}
         <div className={`nav-menu ${isMenuOpen ? 'open' : ''}`}>
           <div className="nav-links-center">
-            <Link to="/" className="nav-link" onClick={closeMenu}>Home</Link>
-            <Link to="/about" className="nav-link" onClick={closeMenu}>About</Link>
-            <Link to="/pricing" className="nav-link" onClick={closeMenu}>Pricing</Link>
+            <Link to="/" className={`nav-link ${isActive('/')}`} onClick={closeMenu}>Home</Link>
+            <Link to="/about" className={`nav-link ${isActive('/about')}`} onClick={closeMenu}>About</Link>
+            <Link to="/pricing" className={`nav-link ${isActive('/pricing')}`} onClick={closeMenu}>Pricing</Link>
           </div>
 
           <div className="nav-links-right">
             {isLoggedIn ? (
-              <>
-                <Link to="/dashboard" className="nav-link" onClick={closeMenu}>Dashboard</Link>
-                <Link to="/analyze" className="nav-link" onClick={closeMenu}>Analyze</Link>
+              <div className="flex items-center gap-6">
+                <Link to="/dashboard" className={`nav-link ${isActive('/dashboard')}`} onClick={closeMenu}>Dashboard</Link>
+                <Link to="/analyze" className={`nav-link ${isActive('/analyze')}`} onClick={closeMenu}>Analyze</Link>
 
-                <div className="nav-user flex-center">
-                  <span className="user-name">{user?.name?.split(' ')[0]}</span>
-                  <Button variant="outline" onClick={handleLogout}>Logout</Button>
+                <div className="nav-user flex items-center">
+                  <span className="user-name cursor-pointer" onClick={()=>{navigate('/profile')}}>{user?.name?.split(' ')[0]}</span>
+                  <Button variant="outline" onClick={handleLogout} className="text-xs py-1.5 px-4">Logout</Button>
                 </div>
-              </>
+              </div>
             ) : (
               <div className="auth-buttons">
-                {/* [UPDATED]: Link ki jagah button handler use kiya hai state sync ke liye */}
-                <Button variant="outline" onClick={() => handleAuthClick(false)}>Login</Button>
-                <Button variant="primary" onClick={() => handleAuthClick(true)}>Register</Button>
+                <Button variant="outline" onClick={() => handleAuthClick(false)} className="px-10">Login</Button>
+                <Button variant="primary" onClick={() => handleAuthClick(true)} className="px-10 shadow-lg shadow-indigo-500/20">Register</Button>
               </div>
             )}
           </div>

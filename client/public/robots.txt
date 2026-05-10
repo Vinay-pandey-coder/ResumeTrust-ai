@@ -13,6 +13,7 @@ Allow: /register
 # In pages ko Google scan na kare (Security & Privacy)
 Disallow: /dashboard
 Disallow: /analyze
+Disallow: /profile
 Disallow: /api/
 
 # Apne sitemap ka rasta batayein

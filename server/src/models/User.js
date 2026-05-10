@@ -44,6 +44,17 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    // [NEW] Forgot Password OTP fields
+    otp: {
+        type: String,
+        default: null,
+        select: false // Security ke liye default fetch mein nahi aayega
+    },
+    otpExpiry: {
+        type: Date,
+        default: null,
+        select: false // Security ke liye default fetch mein nahi aayega
+    },
     createdAt: {
         type: Date,
         default: Date.now

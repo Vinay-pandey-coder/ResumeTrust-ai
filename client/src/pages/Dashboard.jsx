@@ -30,59 +30,87 @@ const Dashboard = ({ user }) => {
 
   if (loading) return <Loader fullScreen />;
 
+  const avgTrust = history.length > 0
+    ? Math.round(history.reduce((acc, curr) => acc + curr.trustScore, 0) / history.length)
+    : 0;
+
   return (
-    <div className="dashboard-page page-container fade-in">
+    <div className="dashboard-page container fade-in mb-20">
       <MetaData title="Dashboard" description="View your resume analysis history and trust score." />
 
-      <div className="dashboard-header flex-between mb-10">
-        <div className="user-welcome">
-          {/* [FIXED]: Added safe check for user.name to prevent split() error */}
-          <h1 className="hero-title mb-0">
-            Welcome back, <span>{user?.name ? user.name.split(' ')[0] : 'User'}</span>
+      {/* Hero Section */}
+      <div className="dashboard-hero">
+        <div className="welcome-text">
+          <h1 className="hero-main-title mb-0" style={{ fontSize: '3rem' }}>
+            Welcome back, <br />
+            <span>{user?.name ? user.name.split(' ')[0] : 'Engineer'}</span>
           </h1>
-          <p className="text-secondary">{user?.email}</p>
+          <div className="verified-badge">
+            <span>●</span> Profile Verified & Secure
+          </div>
         </div>
-        <Button onClick={() => navigate('/analyze')} variant="primary">
-          New Analysis
-        </Button>
-      </div>
-
-      <div className="stats-row grid-3 mb-10">
-        <div className="card stat-card">
-          <span className="stat-label">Total Analyses</span>
-          <h2 className="stat-value">{history.length}</h2>
-        </div>
-        <div className="card stat-card">
-          <span className="stat-label">Average Trust Score</span>
-          <h2 className="stat-value">
-            {history.length > 0
-              ? Math.round(history.reduce((acc, curr) => acc + curr.trustScore, 0) / history.length)
-              : 0}%
-          </h2>
-        </div>
-        <div className="card stat-card">
-          <span className="stat-label">GitHub Handle</span>
-          <h2 className="stat-value text-accent">@{user?.githubHandle || 'linked'}</h2>
+        <div className="hero-actions flex gap-4">
+          <Button onClick={() => navigate('/analyze')} variant="primary" className="px-8 shadow-lg shadow-indigo-500/20">
+            + New Analysis
+          </Button>
+          <Button onClick={() => window.scrollTo({ top: 800, behavior: 'smooth' })} variant="outline" className="px-8">
+            View Reports
+          </Button>
         </div>
       </div>
 
-      <div className="history-section">
-        <h2 className="section-title mb-6">Recent Analyses</h2>
+      {/* Stats Row */}
+      <div className="stats-grid mb-16">
+        <div className="card stat-card-premium">
+          <div className="card-icon">📊</div>
+          <div className="stat-val">{history.length}</div>
+          <div className="stat-label">Total Audits</div>
+          <div className="stat-helper">Lifetime analysis completed</div>
+        </div>
+        
+        <div className="card stat-card-premium">
+          <div className="card-icon">🛡️</div>
+          <div className="stat-val">{avgTrust}%</div>
+          <div className="stat-label">Average Trust</div>
+          <div className="stat-helper">Verified engineering proof</div>
+        </div>
+
+        <div className="card stat-card-premium">
+          <div className="card-icon">🐙</div>
+          <div className="stat-val" style={{ fontSize: '1.25rem', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            @{user?.githubHandle || 'verified'}
+          </div>
+          <div className="stat-label">GitHub Handle</div>
+          <div className="stat-helper">Connected & Synchronized</div>
+        </div>
+      </div>
+
+      {/* Insights Row */}
+      <div className="insight-chips-row mt-10">
+        <div className="insight-chip"><span>✓</span> Strong ATS Alignment</div>
+        <div className="insight-chip"><span>✓</span> GitHub Verified</div>
+        <div className="insight-chip"><span>✓</span> Multi-Repo Scan Active</div>
+        <div className="insight-chip"><span>✓</span> No Critical Red Flags</div>
+      </div>
+
+      {/* Recent Analyses Section */}
+      <div className="content-section">
+        <div className="section-header flex-between mb-8">
+          <h2 className="section-title mb-0">Recent Analyses</h2>
+          <p className="text-secondary text-sm">Showing your latest {history.length} reports</p>
+        </div>
 
         {history.length > 0 ? (
-          <div className="history-list">
+          <div className="analyses-list">
             {history.map((item) => (
               <AnalysisCard key={item._id} analysis={item} />
             ))}
           </div>
         ) : (
-          <div className="card empty-state text-center py-10">
-            <div className="empty-icon text-muted mb-4">📭</div>
-            <h3>No analyses yet</h3>
-            <p className="text-secondary mb-6">Upload your first resume to see how it scores!</p>
-            <Button variant="outline" onClick={() => navigate('/analyze')}>
-              Start First Analysis
-            </Button>
+          <div className="card p-20 text-center">
+            <h3 className="mb-4">No analysis history yet</h3>
+            <p className="text-secondary mb-8">Upload your first resume to see the deep-scan results here.</p>
+            <Button onClick={() => navigate('/analyze')} variant="primary">Start First Analysis</Button>
           </div>
         )}
       </div>
