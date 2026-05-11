@@ -6,7 +6,9 @@ const nodemailer = require('nodemailer'); // [NEW]
 
 // [NEW] Email transporter
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: process.env.EMAIL_HOST || 'smtp-relay.brevo.com',
+    port: process.env.EMAIL_PORT || 587,
+    secure: false, // 587 ke liye false hi rehta hai
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
