@@ -6,9 +6,7 @@ const nodemailer = require('nodemailer'); // [NEW]
 
 // [NEW] Email transporter
 const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp-relay.brevo.com',
-    port: process.env.EMAIL_PORT || 2525,
-    secure: false, // 587 ke liye false hi rehta hai
+    service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -217,8 +215,8 @@ exports.forgotPassword = async (req, res) => {
         // OTP generate karo
         const otp = generateOTP();
 
-        // OTP expiry — 5 minutes (OTP verify 30 sec mein karna hoga frontend pe)
-        const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
+        // OTP expiry — (OTP verify 30 sec)
+        const otpExpiry = new Date(Date.now() + 30 * 1000);
 
         // OTP save karo DB mein
         await User.findByIdAndUpdate(user._id, {
