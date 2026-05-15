@@ -1,9 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
-import React from 'react';
-import { Helmet } from 'react-helmet-async';
-
 const MetaData = ({ title, description, image, url }) => {
   const metaTitle = title ? `${title} | ResumeTrust AI` : 'ResumeTrust AI | AI Resume Verification';
   const metaDescription = description || 'AI-powered ATS scoring and GitHub authenticity verification for your resume.';
