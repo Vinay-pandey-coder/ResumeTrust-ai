@@ -3,7 +3,8 @@ import { Helmet } from 'react-helmet-async';
 
 const MetaData = ({ title, description, image, url }) => {
   const metaTitle = title ? `${title} | ResumeTrust AI` : 'ResumeTrust AI | AI Resume Verification';
-  const metaDescription = description || 'AI-powered ATS scoring and GitHub authenticity verification for your resume.';
+  // Isko thoda detail mein kar do
+  const metaDescription = description || 'ResumeTrust AI: Revolutionizing technical hiring with AI-powered ATS auditing and real-time GitHub verification. Build proof of your skills and get your trust score today!';
   const metaImage = image || 'https://resume-trust-ai-wccy.vercel.app/og-image.jpg'; // Ek default image ka link
   const metaUrl = url || 'https://resume-trust-ai-wccy.vercel.app/';
 
