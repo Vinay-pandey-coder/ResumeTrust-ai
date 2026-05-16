@@ -1,31 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const { 
-    register, 
-    login, 
-    getMe, 
-    updateProfile, 
-    deleteAccount,
-    forgotPassword,  // [NEW]
-    verifyOtp,       // [NEW]
-    resetPassword    // [NEW]
-} = require('../controllers/authController');
+const { register, login, getMe, updateProfile, deleteAccount } = require('../controllers/authController'); // [NEW] updateProfile, deleteAccount add kiye
 const { protect } = require('../middleware/auth');
 const passport = require('passport');
 
 // Private Routes
 router.get('/me', protect, getMe);
-router.put('/profile', protect, updateProfile);
-router.delete('/account', protect, deleteAccount);
+router.put('/profile', protect, updateProfile);     // [NEW] Profile update
+router.delete('/account', protect, deleteAccount);  // [NEW] Account delete
 
 // Public Routes
 router.post('/register', register);
 router.post('/login', login);
-
-// [NEW] Forgot Password Routes — Public
-router.post('/forgot-password', forgotPassword);
-router.post('/verify-otp', verifyOtp);
-router.post('/reset-password', resetPassword);
 
 // ---------------------------------------------------------
 // [NEW] GitHub OAuth Routes
