@@ -22,8 +22,7 @@ const Home = ({ isLoggedIn, login, openLogin, openRegister }) => {
   });
 
   // ✅ Backend URL for GitHub Auth (Port 5000)
-  const GITHUB_AUTH_URL = "http://localhost:5000/api/auth/github";
-
+  const GITHUB_AUTH_URL = `${import.meta.env.VITE_API_URL}/auth/github`;
   // ✅ Effect to handle GitHub Callback and Auto-fill form
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
