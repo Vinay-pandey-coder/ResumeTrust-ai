@@ -6,11 +6,14 @@ const nodemailer = require('nodemailer'); // [NEW]
 
 // [NEW] Email transporter
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp-relay.brevo.com',
+    port: 587,
+    secure: false,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    }
+    },
+    family: 4 
 });
 
 // [NEW] 6 digit OTP generate karo
